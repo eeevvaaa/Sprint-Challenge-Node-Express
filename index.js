@@ -30,6 +30,20 @@ const proCheck = (req, res, next) => {
   }
 }
 
+const actCheck = (req, res, next) => {
+  const project_id = req.body.project_id;
+  const description = req.body.description;
+  const notes = req.body.notes;
+  if(!project_id || !description || !notes) {
+    return errHelper(404, 'Project ID, description, and notes are required.', res);
+    next();
+  } else if (description.length > 128) {
+    return errHelper(404, 'Description can not exceed 128 characters.', res);
+    next();
+  }
+  next();
+}
+
 //routes tester-------------------------------------------
 server.get('/', (req, res) => {
   res.json('！*★,°*:.☆(￣▽￣)/$:*.°★* 。');
@@ -76,9 +90,9 @@ server.get('/api/projects/actions/:projectId', (req, res) => {
 
 server.post('/api/projects', proCheck, (req, res) => {
   const { name, description } = req.body;
-  const newProject = { name, description };
+  const newAction = { name, description };
   projectDb
-    .insert(newProject)
+    .insert(newAction)
     .then( newPro => {
       console.log('\n--- Success ---', newPro);
       res.json(newPro);
@@ -88,7 +102,7 @@ server.post('/api/projects', proCheck, (req, res) => {
     });
 });
 
-server.put('/api/projects/:id', (req, res) => {
+server.put('/api/projects/:id', proCheck, (req, res) => {
   const { id } = req.params;
   const { name, description } = req.body;
   const editProject = { name, description }
@@ -120,6 +134,76 @@ server.delete('/api/projects/:id', (req, res) => {
 })
 
 //action--------------------------------------------------
+server.get('/api/actions', (req, res) => {
+  actionDb
+    .get()
+    .then(actions => {
+      console.log('\n--- Success ---', actions);
+      res.status(200).json(actions);
+    })
+    .catch(err => {
+      return errHelper(500, 'Error getting actions.', res);
+    });
+});
+
+server.get('/api/actions/:id', (req, res) => {
+  const { id } = req.params;
+  actionDb
+    .get(id)
+    .then(action => {
+      console.log('\n--- Success ---', action);
+      res.status(200).json(action);
+    })
+    .catch(err => {
+      return errHelper(500, 'Error getting action by ID.', res);
+    });
+});
+
+server.post('/api/actions', actCheck, (req, res) => {
+  const { project_id, description, notes } = req.body;
+  const newAction = { project_id, description, notes };
+  actionDb
+    .insert(newAction)
+    .then( newAct => {
+      console.log('\n--- Success ---', newAct);
+      res.json(newAct);
+    })
+    .catch(err => {
+      return errHelper(500, 'Error adding new action.', res);
+    });
+});
+
+server.put('/api/actions/:id', actCheck, (req, res) => {
+  const { id } = req.params;
+  const { project_id, description, notes } = req.body;
+  const editAction = { project_id, description, notes }
+  actionDb
+    .update(id, editAction)
+    .then(actionDb => {
+      console.log('\n--- Success ---', editAction);
+      actionDb
+        .get(id)
+        .then(action => {
+          res.json(action)
+        });
+    })
+    .catch(err => {
+      return errHelper(500, 'Error editing action.', res);
+    });
+});
+
+server.delete('/api/actions/:id', (req, res) => {
+  const { id } = req.params;
+  actionDb
+    .remove(id)
+    .then(actRemoved => {
+      res.json({ Success: 'Action removed.'});
+    })
+    .catch(err => {
+      return errHelper(500, 'Error removing action.', res);
+    });
+})
+
 
 //port
 server.listen(port, () => {
