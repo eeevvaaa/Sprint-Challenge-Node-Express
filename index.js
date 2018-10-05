@@ -179,8 +179,8 @@ server.put('/api/actions/:id', actCheck, (req, res) => {
   const editAction = { project_id, description, notes }
   actionDb
     .update(id, editAction)
-    .then(actionDb => {
-      console.log('\n--- Success ---', editAction);
+    .then(action => {
+      console.log('\n--- Success ---', action);
       actionDb
         .get(id)
         .then(action => {
@@ -197,6 +197,7 @@ server.delete('/api/actions/:id', (req, res) => {
   actionDb
     .remove(id)
     .then(actRemoved => {
+      console.log('\n--- Success ---', actRemoved);
       res.json({ Success: 'Action removed.'});
     })
     .catch(err => {
