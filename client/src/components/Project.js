@@ -12,7 +12,7 @@ export default function Project(props) {
 }
 
 const ProjectDiv = styled.div`
-  width: 300px;
+  width: 500px;
   height: 200px;
   background-color: rgba(8, 75, 89, 0.5);
   color: white;
@@ -21,5 +21,5 @@ const ProjectDiv = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin: 20px auto;
+  margin-bottom: 30px;
 `

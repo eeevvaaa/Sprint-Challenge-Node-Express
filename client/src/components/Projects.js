@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import Project from './Project';
+import styled from 'styled-components';
 
 export default class Projects extends Component {
   state = {
@@ -22,12 +23,16 @@ export default class Projects extends Component {
 
   render() {
     return(
-      <div>
+      <Container>
         {this.state.projects.map((p, i) => (
           <Project key={i} project={p} />)
         )}
-      </div>
+      </Container>
     );
   }
 }
 
+const Container = styled.div`
+  padding-left: 50px;
+  padding-top: 50px;
+`

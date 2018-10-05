@@ -17,5 +17,6 @@ export default App;
 
 const AppDiv = styled.div`
   background-color: #000000;
-  min-height: 100px;
+  max-width: 1000px;
+  min-height: 1000px;
 `
