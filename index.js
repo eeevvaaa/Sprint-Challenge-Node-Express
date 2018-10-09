@@ -6,6 +6,7 @@ const port = 8894;
 const actionDb = require('./data/helpers/actionModel');
 const projectDb = require('./data/helpers/projectModel');
 const errHelper = (status, message, res) => {
+  console.log('Error.')
   res.status(status).json({ Error: message });
 }
 
@@ -21,11 +22,10 @@ const proCheck = (req, res, next) => {
   const description = req.body.description
   if(!name || !description) {
     return errHelper(404, 'Name and description are required.', res);
-    next();
   } else if(name.length > 128) {
     return errHelper(404, 'Name can not be more than 128 characters.', res);
-    next();
   } else {
+    console.log('here');
     next();
   }
 }
@@ -36,10 +36,8 @@ const actCheck = (req, res, next) => {
   const notes = req.body.notes;
   if(!project_id || !description || !notes) {
     return errHelper(404, 'Project ID, description, and notes are required.', res);
-    next();
   } else if (description.length > 128) {
     return errHelper(404, 'Description can not exceed 128 characters.', res);
-    next();
   }
   next();
 }
@@ -126,6 +124,7 @@ server.delete('/api/projects/:id', (req, res) => {
   projectDb
     .remove(id)
     .then(proRemoved => {
+      console.log('\n--- Success ---', proRemoved);
       res.json({ Success: 'Project removed.'});
     })
     .catch(err => {
